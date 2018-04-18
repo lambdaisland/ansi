@@ -1,0 +1,3 @@
+test:
+  override:
+    - 'clj -A:test'
