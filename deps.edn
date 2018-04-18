@@ -1,0 +1,29 @@
+{:deps
+ {org.clojure/clojure         {:mvn/version "1.9.0"}}
+
+ :paths ["src"]
+
+ :aliases
+ {:test
+  {:extra-deps {lambdaisland/kaocha {:git/url "https://github.com/lambdaisland/kaocha.git"
+                                     :sha "385e4607199e94a98ea844bf847fe970e9d6d3e1"}}
+   :main-opts ["-m" "lambdaisland.kaocha.runner"]}
+
+  :dev
+  {:extra-paths ["dev"]
+   :extra-deps  {com.cemerick/pomegranate                {:mvn/version "1.0.0"}
+                 ancient-clj                             {:mvn/version "0.6.15"}
+                 org.clojure/tools.deps.alpha            {:mvn/version "0.5.417"}
+                 lambdaisland/nrepl                      {:mvn/version "0.2.0"
+                                                          :exclusions [org.clojure/tools.cli]}
+                 ;; temporary: latest master detects deps.edn
+                 com.github.clojure-emacs/refactor-nrepl {:mvn/version "master-SNAPSHOT"}}}
+
+  :cloverage
+  {:extra-deps {cloverage {:mvn/version "1.0.10"}}
+   :main-opts  ["-m" "cloverage.coverage" "--runner" "lambdaisland.kaocha" "--test-ns-path" "test" "--src-ns-path" "src" "--ns-exclude-regex" "if-not-set-it-does-not-work"]}}
+
+ :mvn/repos
+ {"central" {:url "https://repo1.maven.org/maven2/"}
+  "clojars" {:url "https://clojars.org/repo"}
+  "jitpack" {:url "https://jitpack.io"}}}
