@@ -1,4 +1,4 @@
-# lambdaisland/ansi
+# lambdaisland/ansi [![CircleCI](https://circleci.com/gh/lambdaisland/ansi.svg?style=svg)](https://circleci.com/gh/lambdaisland/ansi)
 
 Parse ANSI color codes to Hiccup (HTML)
 
