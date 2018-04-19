@@ -23,6 +23,9 @@
     "hello"
     [["0m" "hello"]]
 
+    "foo\nbar"
+    [["0m" "foo\nbar"]]
+
     "\033[5mhello"
     [["0m" ""] ["5m" "hello"]]
 

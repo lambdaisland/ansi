@@ -17,6 +17,13 @@ Parse ANSI color codes to Hiccup (HTML)
 
 Only the original 8 colors are supported, multi-byte extensions are not implemented.
 
+There's a main namespace that you can use to convert a file from the command line
+
+```
+command_that_generates_colorful_output > output.log
+clj -m lambdaisland.ansi.convert output.log > output.html
+```
+
 ## License
 
 &copy; Arne Brasseur 2018

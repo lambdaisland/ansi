@@ -16,7 +16,7 @@
     (.useDelimiter #"\033\[")))
 
 (defn split-token [token]
-  (if-let [[_ csi txt] (re-find #"([\x30-\x3F]*[\x20-\x2F]*[\x40-\x7E])(.*)" token)]
+  (if-let [[_ csi txt] (re-find #"(?s)([\x30-\x3F]*[\x20-\x2F]*[\x40-\x7E])(.*)" token)]
     [csi txt]
     [nil (str ESC "[" token)]))
 
@@ -58,4 +58,4 @@
                                                         (str/join " "))} txt])]))
                [{} []])
        second
-       (drop 1)))
+       (drop-while #(= [:span {:class ""} ""] %))))

@@ -1,13 +1,14 @@
 {:deps
- {org.clojure/clojure         {:mvn/version "1.9.0"}}
+ {org.clojure/clojure {:mvn/version "1.9.0"}
+  hiccup              {:mvn/version "1.0.5"}}
 
  :paths ["src"]
 
  :aliases
  {:test
   {:extra-deps {lambdaisland/kaocha {:git/url "https://github.com/lambdaisland/kaocha.git"
-                                     :sha "385e4607199e94a98ea844bf847fe970e9d6d3e1"}}
-   :main-opts ["-m" "lambdaisland.kaocha.runner"]}
+                                     :sha     "385e4607199e94a98ea844bf847fe970e9d6d3e1"}}
+   :main-opts  ["-m" "lambdaisland.kaocha.runner"]}
 
   :dev
   {:extra-paths ["dev"]
@@ -15,7 +16,7 @@
                  ancient-clj                             {:mvn/version "0.6.15"}
                  org.clojure/tools.deps.alpha            {:mvn/version "0.5.417"}
                  lambdaisland/nrepl                      {:mvn/version "0.2.0"
-                                                          :exclusions [org.clojure/tools.cli]}
+                                                          :exclusions  [org.clojure/tools.cli]}
                  ;; temporary: latest master detects deps.edn
                  com.github.clojure-emacs/refactor-nrepl {:mvn/version "master-SNAPSHOT"}}}
 
