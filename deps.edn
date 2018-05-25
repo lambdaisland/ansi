@@ -10,6 +10,12 @@
                                      :sha     "385e4607199e94a98ea844bf847fe970e9d6d3e1"}}
    :main-opts  ["-m" "lambdaisland.kaocha.runner"]}
 
+  :test-cljs
+  {:extra-deps  {org.clojure/clojurescript {:mvn/version "1.10.238"}
+                 doo                       {:mvn/version "0.1.8"}}
+   :extra-paths ["test"]
+   :main-opts   ["-m" "lambdaisland.ansi.cljs-test-runner"]}
+
   :dev
   {:extra-paths ["dev"]
    :extra-deps  {com.cemerick/pomegranate                {:mvn/version "1.0.0"}
