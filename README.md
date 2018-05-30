@@ -1,5 +1,7 @@
 # lambdaisland/ansi [![CircleCI](https://circleci.com/gh/lambdaisland/ansi.svg?style=svg)](https://circleci.com/gh/lambdaisland/ansi)
 
+[![Clojars Project](https://img.shields.io/clojars/v/lambdaisland/ansi.svg)](https://clojars.org/lambdaisland/ansi)
+
 Parse ANSI color codes, optionally convert to Hiccup.
 
 ## Features
