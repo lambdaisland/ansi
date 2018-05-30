@@ -91,4 +91,4 @@ In this case the `hiccup-xform` might be useful.
 ## License
 
 &copy; Arne Brasseur 2018
-Available under the terms of the Eclipse Public License 1.0, see LICENSE.txt
+Available under the terms of the Mozilla Public License Version 2.0, see LICENSE.txt

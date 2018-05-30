@@ -1,6 +1,5 @@
 {:deps
- {org.clojure/clojure {:mvn/version "1.9.0"}
-  hiccup              {:mvn/version "1.0.5"}}
+ {org.clojure/clojure {:mvn/version "1.9.0"}}
 
  :paths ["src"]
 
