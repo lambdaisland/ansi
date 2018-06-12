@@ -14,6 +14,12 @@
   #?(:clj  #"(?s)([^\033]*)\033\[([\x30-\x3F]*[\x20-\x2F]*[\x40-\x7E])(.*)"
      :cljs #"([^\033]*)\033\[([\x30-\x3F]*[\x20-\x2F]*[\x40-\x7E])([\s\S]*)"))
 
+(def ESC
+  "ASCII escape character (codepoint 27, hex 1b, octal 33).
+
+  In ClojureScript: returns a single character String."
+  #?(:clj \u001b
+     :cljs "\033"))
 
 ;; | Name           | FG |  BG | VGA         | CMD         | Terminal.app | PuTTY       | mIRC        | xterm       | Ubuntu      |
 ;; |----------------+----+-----+-------------+-------------+--------------+-------------+-------------+-------------+-------------|
@@ -125,7 +131,7 @@
           [(merge {type color} (if bold? {:bold true}))
            (next more)])
       2 [{:foreground (color-24-bit (take 3 more))}
-         (drop 3 more)])))
+         (nthnext more 3)])))
 
 (defn csi->attrs
   "Given a CSI specifier, excluding ESC[ but including the final \"m\", convert it
@@ -143,19 +149,42 @@
                  (merge result (code->attrs code))))
         result))))
 
+(defn str-length
+  "Fast string length"
+  [s]
+  #?(:clj (.length s)
+     :cljs (.-length s)))
+
+(defn has-escape-char?
+  "Efficient check to see if a string contains an escape character."
+  [s]
+  (let [len (str-length s)]
+    (loop [i 0]
+      (cond
+        (= i len)
+        false
+
+        (= ESC (.charAt s i))
+        true
+
+        :else
+        (recur (inc i))))))
+
 (defn token-stream
   "Tokenize a string, whereby each CSI sequence gets transformed into a map of
   properties. The result is a vector of strings and maps."
   [string]
-  (loop [input string
-         result []]
-    (if-let [match (re-find csi-pattern input)]
-      (let [[_ start csi tail] match]
-        (recur tail
-               (-> result
-                   (cond-> #_result (seq start) (conj start))
-                   (conj (csi->attrs csi)))))
-      (conj result input))))
+  (if (has-escape-char? string) ;; short circuit
+    (loop [input string
+           result []]
+      (if-let [match (re-find csi-pattern input)]
+        (let [[_ start csi tail] match]
+          (recur tail
+                 (-> result
+                     (cond-> #_result (seq start) (conj start))
+                     (conj (csi->attrs csi)))))
+        (cond-> result (seq input) (conj input))))
+    [string]))
 
 (defn apply-props
   "Stateful transducer, apply it over the output of token-stream to know which

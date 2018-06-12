@@ -109,6 +109,16 @@
           [:span {:style {:color "rgb(99,88,77)"}} " reset + rgb color"]]))
   )
 
+(deftest has-escape-char?-test
+  (are [x y] (= x y)
+    true  (ansi/has-escape-char? "\033xxx")
+    true  (ansi/has-escape-char? "xxx\033xxx")
+    true  (ansi/has-escape-char? "xxx\033")
+    true  (ansi/has-escape-char? "\033")
+    false (ansi/has-escape-char? "xxxx")
+    false (ansi/has-escape-char? "x")
+    false (ansi/has-escape-char? "")))
+
 #?(:cljs (doo-tests 'lambdaisland.ansi-test))
 
 #_
