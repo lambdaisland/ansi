@@ -6,7 +6,7 @@
 
   <groupId>lambdaisland</groupId>
   <artifactId>ansi</artifactId>
-  <version>0.1.1</version>
+  <version>0.1.4</version>
   <name>ansi</name>
 
   <dependencies>

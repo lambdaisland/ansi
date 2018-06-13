@@ -106,22 +106,62 @@
           [:span
            {:style {:color "rgb(0,205,0)", :font-weight "bold"}}
            " green foreground"]
-          [:span {:style {:color "rgb(99,88,77)"}} " reset + rgb color"]]))
-  )
+          [:span {:style {:color "rgb(99,88,77)"}} " reset + rgb color"]])))
 
 (deftest has-escape-char?-test
   (are [x y] (= x y)
-    true  (ansi/has-escape-char? "\033xxx")
-    true  (ansi/has-escape-char? "xxx\033xxx")
-    true  (ansi/has-escape-char? "xxx\033")
-    true  (ansi/has-escape-char? "\033")
+    true  (ansi/has-escape-char? "\033[xxx")
+    true  (ansi/has-escape-char? "xxx\033[xxx")
+    true  (ansi/has-escape-char? "xxx\033[")
+    true  (ansi/has-escape-char? "\033[")
     false (ansi/has-escape-char? "xxxx")
     false (ansi/has-escape-char? "x")
     false (ansi/has-escape-char? "")))
+
+(deftest str-split-test
+  (is (= (ansi/str-split "" ";")
+         [""]))
+  (is (= (ansi/str-split "foo" ";")
+         ["foo"]))
+  (is (= (ansi/str-split "foo;bar" ";")
+         ["foo" "bar"]))
+  (is (= (ansi/str-split "foo;bar;baz" ";")
+         ["foo" "bar" "baz"]))
+  (is (= (ansi/str-split "foo;;baz" ";")
+         ["foo" "" "baz"] )))
+
+(deftest str-scan-test
+  (is (= (ansi/str-scan 0 "abc123" 97 122)
+         3))
+
+  (is (= (ansi/str-scan 0 "" 97 122)
+         0))
+
+  (is (= (ansi/str-scan 0 "AAA" 97 122)
+         0))
+
+  (is (= (ansi/str-scan 2 "AAA" 97 122)
+         2))
+
+  (is (= (ansi/str-scan 2 "AAabcAA" 97 122)
+         5)))
+
+(deftest next-csi-test
+  (is (= (ansi/next-csi "aaa\033[0mbbb")
+         ["aaa" "0m" "bbb"]))
+
+  (is (= (ansi/next-csi "")
+         nil))
+
+  (is (= (ansi/next-csi "aaa\033[0mbbb\033[5;18;37m")
+         ["aaa" "0m" "bbb[5;18;37m"]))
+
+  (is (= (-> (ansi/next-csi "aaa\033[0mbbb\033[5;18;37m")
+             last
+             ansi/next-csi)
+         ["bbb" "5;18;37m" ""])))
 
 #?(:cljs (doo-tests 'lambdaisland.ansi-test))
 
 #_
 (run-tests)
-
-

@@ -1,25 +1,21 @@
 (ns lambdaisland.ansi
   (:require [clojure.string :as str]))
 
-;; https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences
-;;
-
-
-;; The ESC [ is followed by any number (including none) of "parameter bytes" in
-;; the range 0x30–0x3F (ASCII 0–9:;<=>?), then by any number of "intermediate
-;; bytes" in the range 0x20–0x2F (ASCII space and !"#$%&'()*+,-./), then finally
-;; by a single "final byte" in the range 0x40–0x7E (ASCII @A–Z[\]^_`a–z{|}~).
-(def csi-pattern
-  "Regex to match a Control Sequence Introducer"
-  #?(:clj  #"(?s)([^\033]*)\033\[([\x30-\x3F]*[\x20-\x2F]*[\x40-\x7E])(.*)"
-     :cljs #"([^\033]*)\033\[([\x30-\x3F]*[\x20-\x2F]*[\x40-\x7E])([\s\S]*)"))
 
 (def ESC
-  "ASCII escape character (codepoint 27, hex 1b, octal 33).
+  "ASCII escape character (codepoint 27, hex 1b, octal 33)."
+  #?(:clj "\u001b["
+     :cljs "\033["))
 
-  In ClojureScript: returns a single character String."
-  #?(:clj \u001b
-     :cljs "\033"))
+(def =i #?(:clj =
+           :cljs identical?))
+
+(defn str-length
+  "Fast string length"
+  [s]
+  #?(:clj (.length s)
+     :cljs (.-length s)))
+
 
 ;; | Name           | FG |  BG | VGA         | CMD         | Terminal.app | PuTTY       | mIRC        | xterm       | Ubuntu      |
 ;; |----------------+----+-----+-------------+-------------+--------------+-------------+-------------+-------------+-------------|
@@ -86,14 +82,14 @@
   the property gets unset."
   [code]
   (cond
-    (= 0 code)        {:foreground nil
+    (=i 0 code)       {:foreground nil
                        :background nil
                        :bold       nil}
-    (= 1 code)        {:bold true}
+    (=i 1 code)       {:bold true}
     (<= 30 code 37)   {:foreground (get-color (- code 30))}
-    (= 39 code)       {:foreground nil}
+    (=i 39 code)      {:foreground nil}
     (<= 40 code 47)   {:background (get-color (- code 40))}
-    (= 49 code)       {:background nil}
+    (=i 49 code)      {:background nil}
     (<= 90 code 99)   {:foreground (get-color (+ 8 (- code 90)))}
     (<= 100 code 109) {:background (get-color (+ 8 (- code 40)))}))
 
@@ -133,42 +129,75 @@
       2 [{:foreground (color-24-bit (take 3 more))}
          (nthnext more 3)])))
 
+(defn str-split
+  "Like clojure.string/split, but uses a single character instead of a regex,
+  allowing for faster operation."
+  [s sep]
+  (loop [res   []
+         start 0
+         end   (.indexOf s sep)]
+    (if (=i end -1)
+      (conj res (.substring s start))
+      (recur (conj res (.substring s start end))
+             (inc end)
+             (.indexOf s sep (inc end))))))
+
 (defn csi->attrs
   "Given a CSI specifier, excluding ESC[ but including the final \"m\", convert it
   to a map of properties that it sets or unsets. Property values of nil indicate
   a reset/unset. "
   [csi]
-  (if (= \m (last csi)) ;; m: SGR - Select Graphic Rendition
-    (loop [[code & codes] (map parse-int (str/split (apply str (butlast csi)) #";"))
+  (if (.endsWith csi "m") ;; m: SGR - Select Graphic Rendition
+    (loop [[code & codes] (map parse-int (str-split (.substring csi 0 (dec (str-length csi))) ";"))
            result         {}]
       (if code
-        (if (or (= 38 code) (= 48 code))
+        (if (or (=i 38 code) (=i 48 code))
           (let [[res codes] (parse-color code codes)]
             (recur codes (merge result res)))
           (recur codes
                  (merge result (code->attrs code))))
         result))))
 
-(defn str-length
-  "Fast string length"
-  [s]
-  #?(:clj (.length s)
-     :cljs (.-length s)))
 
 (defn has-escape-char?
   "Efficient check to see if a string contains an escape character."
   [s]
+  #?(:clj (.contains s ESC)
+     :cljs (.includes s ESC)))
+
+(defn str-scan
+  "Starting at position pos, move forward as long as the characters at the current
+  position are within the given range. Returns the new position."
+  [pos s min max]
   (let [len (str-length s)]
-    (loop [i 0]
-      (cond
-        (= i len)
-        false
+    (loop [pos pos]
+      (if (>= pos len)
+        pos
+        (let [ch (.codePointAt s pos)]
+          (if (<= min ch max)
+            (recur (inc pos))
+            pos))))))
 
-        (= ESC (.charAt s i))
-        true
+;; https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences
+;;
 
-        :else
-        (recur (inc i))))))
+;; The ESC [ is followed by any number (including none) of "parameter bytes" in
+;; the range 0x30–0x3F (ASCII 0–9:;<=>?), then by any number of "intermediate
+;; bytes" in the range 0x20–0x2F (ASCII space and !"#$%&'()*+,-./), then finally
+;; by a single "final byte" in the range 0x40–0x7E (ASCII @A–Z[\]^_`a–z{|}~).
+(defn next-csi
+  ([s]
+   (next-csi s 0))
+  ([s start]
+   (let [esc-pos (.indexOf s ESC start)
+         pos (-> esc-pos
+                 (+ 2)
+                 (str-scan s 0x30 0x3F)
+                 (str-scan s 0x20 0x2F))]
+     (when (<= 2 pos (str-length s))
+       (if (<= 0x40 (.codePointAt s pos) 0x7E)
+         [(.substring s 0 esc-pos) (.substring s (+ 2 esc-pos) (inc pos)) (.substring s (inc pos))]
+         (recur s pos))))))
 
 (defn token-stream
   "Tokenize a string, whereby each CSI sequence gets transformed into a map of
@@ -177,8 +206,8 @@
   (if (has-escape-char? string) ;; short circuit
     (loop [input string
            result []]
-      (if-let [match (re-find csi-pattern input)]
-        (let [[_ start csi tail] match]
+      (if-let [match (next-csi input)]
+        (let [[start csi tail] match]
           (recur tail
                  (-> result
                      (cond-> #_result (seq start) (conj start))
@@ -230,4 +259,3 @@
   (sequence (comp apply-props
                   (map chunk->hiccup))
             (token-stream text)))
-
