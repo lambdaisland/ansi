@@ -77,14 +77,16 @@
   #?(:clj (Integer/parseInt s)
      :cljs (js/parseInt s 10)))
 
+(def reset-attrs {:foreground nil
+                  :background nil
+                  :bold       nil})
+
 (defn code->attrs
   "Given a CSI code, return a map of properties it sets. A value of `nil` means
   the property gets unset."
   [code]
   (cond
-    (=i 0 code)       {:foreground nil
-                       :background nil
-                       :bold       nil}
+    (=i 0 code)       reset-attrs
     (=i 1 code)       {:bold true}
     (<= 30 code 37)   {:foreground (get-color (- code 30))}
     (=i 39 code)      {:foreground nil}
@@ -148,15 +150,17 @@
   a reset/unset. "
   [csi]
   (if (.endsWith csi "m") ;; m: SGR - Select Graphic Rendition
-    (loop [[code & codes] (map parse-int (str-split (.substring csi 0 (dec (str-length csi))) ";"))
-           result         {}]
-      (if code
-        (if (or (=i 38 code) (=i 48 code))
-          (let [[res codes] (parse-color code codes)]
-            (recur codes (merge result res)))
-          (recur codes
-                 (merge result (code->attrs code))))
-        result))))
+    (if (or (= csi "m") (= csi "0m"))
+      reset-attrs
+      (let [csi-len (str-length csi)]
+        (loop [[code & codes] (map parse-int (str-split (.substring csi 0 (dec (str-length csi))) ";"))
+               result         {}]
+          (if code
+            (if (or (=i 38 code) (=i 48 code))
+              (let [[res codes] (parse-color code codes)]
+                (recur codes (merge result res)))
+              (recur codes (merge result (code->attrs code))))
+            result))))))
 
 
 (defn has-escape-char?

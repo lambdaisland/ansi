@@ -161,6 +161,50 @@
              ansi/next-csi)
          ["bbb" "5;18;37m" ""])))
 
+(deftest csi->attrs-test
+  (is (= {:background [:rgb 205 0 205]}
+         (ansi/csi->attrs "45m")))
+
+  (is (= {:bold true}
+         (ansi/csi->attrs "1m")))
+
+  (is (= {:foreground nil}
+         (ansi/csi->attrs "39m")))
+
+  (is (= {:background nil}
+         (ansi/csi->attrs "49m")))
+
+  (is (= {:foreground [:rgb 0 205 0]}
+         (ansi/csi->attrs "32m")))
+
+  (is (= {:foreground [:rgb 99 88 77], :background nil, :bold nil}
+         (ansi/csi->attrs "0;38;2;99;88;77m")))
+
+  (is (= {:foreground [:rgb 0 0 0], :background [:rgb 229 229 229]}
+         (ansi/csi->attrs "30;47m")))
+
+  (is (= {:bold true, :foreground [:rgb 205 0 0]}
+         (ansi/csi->attrs "1;31m")))
+
+  (is (= {:foreground nil, :background nil}
+         (ansi/csi->attrs "39;49m")))
+
+  (is (= {:foreground [:rgb 255 0 0]}
+         (ansi/csi->attrs "91m")))
+
+  (is (= {:foreground [:rgb 205 0 0]}
+         (ansi/csi->attrs "31m")))
+
+  (is (= {:background [:rgb 205 0 205]}
+         (ansi/csi->attrs "45m")))
+
+  (is (= {:foreground nil, :background nil, :bold nil}
+         (ansi/csi->attrs "0m")))
+
+  (is (= {:foreground nil, :background nil, :bold nil}
+         (ansi/csi->attrs "m"))))
+
+
 #?(:cljs (doo-tests 'lambdaisland.ansi-test))
 
 #_

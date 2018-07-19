@@ -1,1 +1,2 @@
-{:suites [{:test-paths ["test"]}]}
+#kaocha
+{}

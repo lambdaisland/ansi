@@ -6,8 +6,8 @@
  :aliases
  {:test
   {:extra-deps {lambdaisland/kaocha {:git/url "https://github.com/lambdaisland/kaocha.git"
-                                     :sha     "385e4607199e94a98ea844bf847fe970e9d6d3e1"}}
-   :main-opts  ["-m" "lambdaisland.kaocha.runner"]}
+                                     :sha     "e7af8b48aadb32da9dcd7a9e5eb50fe64eae8d62"}}
+   :main-opts  ["-m" "kaocha.runner"]}
 
   :test-cljs
   {:extra-deps  {org.clojure/clojurescript {:mvn/version "1.10.238"}
