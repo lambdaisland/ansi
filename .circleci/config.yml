@@ -10,4 +10,4 @@ jobs:
       - run: ./linux-install-1.9.0.375.sh --prefix `pwd`
       - run: curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
       - run: sudo apt-get install -y nodejs
-      - run: bin/kaocha && bin/clojure -A:test-cljs
+      - run: bin/clojure -A:test -m kaocha.runner && bin/clojure -A:test-cljs
