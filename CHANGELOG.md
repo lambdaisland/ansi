@@ -1,5 +1,10 @@
 # lambdaisland.ansi Changelog
 
+## v0.1.6 - 2018-08-14
+
+Fix a bug where specific character sequences caused regular bits of string to be
+treated as escape sequences, essentially swallowing bits of input.
+
 ## v0.1.5 - 2018-07-19
 
 Support \e[m as a reset code, together with \e[0m.

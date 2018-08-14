@@ -53,7 +53,10 @@
        [{:foreground nil, :background nil, :bold nil} " reset all"])
 
     (= (ansi/token-stream "\033[91m bright red")
-       [{:foreground [:rgb 255 0 0]} " bright red"])))
+       [{:foreground [:rgb 255 0 0]} " bright red"])
+
+    (= (ansi/token-stream "\033[m   raw-url-test")
+       [{:foreground nil, :background nil, :bold nil} "   raw-url-test"])))
 
 (deftest apply-props-test
   (is (= (sequence ansi/apply-props

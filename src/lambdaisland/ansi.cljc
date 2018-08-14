@@ -190,34 +190,37 @@
 ;; bytes" in the range 0x20–0x2F (ASCII space and !"#$%&'()*+,-./), then finally
 ;; by a single "final byte" in the range 0x40–0x7E (ASCII @A–Z[\]^_`a–z{|}~).
 (defn next-csi
+  "Split a string on the next escape sequence, returning a [head CSI tail]
+  triplet. The returned CSI is excluding ESC[."
   ([s]
    (next-csi s 0))
   ([s start]
-   (let [esc-pos (.indexOf s ESC start)
-         pos (-> esc-pos
-                 (+ 2)
-                 (str-scan s 0x30 0x3F)
-                 (str-scan s 0x20 0x2F))]
-     (when (<= 2 pos (str-length s))
-       (if (<= 0x40 (.codePointAt s pos) 0x7E)
-         [(.substring s 0 esc-pos) (.substring s (+ 2 esc-pos) (inc pos)) (.substring s (inc pos))]
-         (recur s pos))))))
+   (let [esc-pos (.indexOf s ESC start)]
+     (when-not (identical? esc-pos -1)
+       (let [pos (-> esc-pos
+                     (+ 2)
+                     (str-scan s 0x30 0x3F)
+                     (str-scan s 0x20 0x2F))]
+         (when (< 1 pos (str-length s))
+           (if (<= 0x40 (.codePointAt s pos) 0x7E)
+             [(.substring s 0 esc-pos) (.substring s (+ 2 esc-pos) (inc pos)) (.substring s (inc pos))]
+             (recur s pos))))))))
 
 (defn token-stream
   "Tokenize a string, whereby each CSI sequence gets transformed into a map of
   properties. The result is a vector of strings and maps."
   [string]
-  (if (has-escape-char? string) ;; short circuit
-    (loop [input string
-           result []]
+  (loop [input string
+         result []]
+    (if (has-escape-char? input)
       (if-let [match (next-csi input)]
         (let [[start csi tail] match]
           (recur tail
                  (-> result
                      (cond-> #_result (seq start) (conj start))
                      (conj (csi->attrs csi)))))
-        (cond-> result (seq input) (conj input))))
-    [string]))
+        (cond-> result (seq input) (conj input)))
+      (cond-> result (seq input) (conj input)))))
 
 (defn apply-props
   "Stateful transducer, apply it over the output of token-stream to know which
