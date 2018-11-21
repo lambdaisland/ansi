@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]))
 
 
-(def ESC
+(def ^String ESC
   "ASCII escape character (codepoint 27, hex 1b, octal 33)."
   #?(:clj "\u001b["
      :cljs "\033["))
@@ -13,7 +13,7 @@
 (defn str-length
   "Fast string length"
   [s]
-  #?(:clj (.length s)
+  #?(:clj (.length ^String s)
      :cljs (.-length s)))
 
 
@@ -134,7 +134,7 @@
 (defn str-split
   "Like clojure.string/split, but uses a single character instead of a regex,
   allowing for faster operation."
-  [s sep]
+  [^String s ^String sep]
   (loop [res   []
          start 0
          end   (.indexOf s sep)]
@@ -148,7 +148,7 @@
   "Given a CSI specifier, excluding ESC[ but including the final \"m\", convert it
   to a map of properties that it sets or unsets. Property values of nil indicate
   a reset/unset. "
-  [csi]
+  [^String csi]
   (if (.endsWith csi "m") ;; m: SGR - Select Graphic Rendition
     (if (or (= csi "m") (= csi "0m"))
       reset-attrs
@@ -166,13 +166,13 @@
 (defn has-escape-char?
   "Efficient check to see if a string contains an escape character."
   [s]
-  #?(:clj (.contains s ESC)
+  #?(:clj (.contains ^String s ESC)
      :cljs (.includes s ESC)))
 
 (defn str-scan
   "Starting at position pos, move forward as long as the characters at the current
   position are within the given range. Returns the new position."
-  [pos s min max]
+  [pos ^String s min max]
   (let [len (str-length s)]
     (loop [pos pos]
       (if (>= pos len)
@@ -194,7 +194,7 @@
   triplet. The returned CSI is excluding ESC[."
   ([s]
    (next-csi s 0))
-  ([s start]
+  ([^String s ^Long start]
    (let [esc-pos (.indexOf s ESC start)]
      (when-not (identical? esc-pos -1)
        (let [pos (-> esc-pos
