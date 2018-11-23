@@ -149,19 +149,24 @@
   to a map of properties that it sets or unsets. Property values of nil indicate
   a reset/unset. "
   [^String csi]
-  (if (.endsWith csi "m") ;; m: SGR - Select Graphic Rendition
-    (if (or (= csi "m") (= csi "0m"))
-      reset-attrs
-      (let [csi-len (str-length csi)]
-        (loop [[code & codes] (map parse-int (str-split (.substring csi 0 (dec (str-length csi))) ";"))
-               result         {}]
-          (if code
-            (if (or (=i 38 code) (=i 48 code))
-              (let [[res codes] (parse-color code codes)]
-                (recur codes (merge result res)))
-              (recur codes (merge result (code->attrs code))))
-            result))))))
+  (let [split-parts #(str-split (.substring csi 0 (dec (str-length csi))) ";")]
+    (cond
+      (.endsWith csi "m") ;; m: SGR - Select Graphic Rendition
+      (if (or (= csi "m") (= csi "0m"))
+        reset-attrs
+        (let [csi-len (str-length csi)]
+          (loop [[code & codes] (map parse-int (split-parts))
+                 result         {}]
+            (if code
+              (if (or (=i 38 code) (=i 48 code))
+                (let [[res codes] (parse-color code codes)]
+                  (recur codes (merge result res)))
+                (recur codes (merge result (code->attrs code))))
+              result))))
 
+      (.endsWith csi "H")
+      (let [[row col] (map parse-int (split-parts))]
+        {:row row :col col}))))
 
 (defn has-escape-char?
   "Efficient check to see if a string contains an escape character."

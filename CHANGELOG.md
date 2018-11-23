@@ -1,4 +1,13 @@
-# lambdaisland.ansi Changelog
+## Unreleased
+
+## Added
+
+Add support for parsing a cursor location message (as sent from terminal to process), i.e. "\e[row;col;H"
+
+## Fixed
+
+## Changed
+
 
 ## v0.1.6 - 2018-08-14
 
