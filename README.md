@@ -1,6 +1,8 @@
-# lambdaisland/ansi [![CircleCI](https://circleci.com/gh/lambdaisland/ansi.svg?style=svg)](https://circleci.com/gh/lambdaisland/ansi)
+# lambdaisland/ansi
 
-[![Clojars Project](https://img.shields.io/clojars/v/lambdaisland/ansi.svg)](https://clojars.org/lambdaisland/ansi)
+<!-- badges -->
+[![CircleCI](https://circleci.com/gh/lambdaisland/ansi.svg?style=svg)](https://circleci.com/gh/lambdaisland/ansi) [![cljdoc badge](https://cljdoc.org/badge/lambdaisland/ansi)](https://cljdoc.org/d/lambdaisland/ansi) [![Clojars Project](https://img.shields.io/clojars/v/lambdaisland/ansi.svg)](https://clojars.org/lambdaisland/ansi) [![codecov](https://codecov.io/gh/lambdaisland/ansi/branch/master/graph/badge.svg)](https://codecov.io/gh/lambdaisland/ansi)
+<!-- /badges -->
 
 Parse ANSI color codes, optionally convert to Hiccup.
 
@@ -16,7 +18,7 @@ Colors in your terminal work by embedding "escape codes" in the text. This
 library contains utilities for parsing and transforming these escape codes.
 
 Terminals are stateful, you can set a property like foreground, background, or
-bold, and it will stay that way until it gets changes or unset (reset). 
+bold, and it will stay that way until it gets changes or unset (reset).
 
 The starting point for dealing with a textual stream is `token-stream`. It takes
 a string as input, and returns a sequence of "tokens", either plain text, or a
