@@ -5,30 +5,13 @@
 
  :aliases
  {:test
-  {:extra-deps {lambdaisland/kaocha {:git/url "https://github.com/lambdaisland/kaocha.git"
-                                     :sha     "b0a70dc267ac60f5f80267747b6b0ff90fc2b4f3"}}}
+  {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-266"}}}
 
   :test-cljs
-  {:extra-deps  {org.clojure/clojurescript {:mvn/version "1.10.238"}
-                 doo                       {:mvn/version "0.1.8"}}
+  {:extra-deps  {org.clojure/clojurescript {:mvn/version "1.10.439"}
+                 doo                       {:mvn/version "0.1.11"}}
    :extra-paths ["test"]
    :main-opts   ["-m" "lambdaisland.ansi.cljs-test-runner"]}
 
   :dev
-  {:extra-paths ["dev"]
-   :extra-deps  {com.cemerick/pomegranate                {:mvn/version "1.0.0"}
-                 ancient-clj                             {:mvn/version "0.6.15"}
-                 org.clojure/tools.deps.alpha            {:mvn/version "0.5.417"}
-                 lambdaisland/nrepl                      {:mvn/version "0.2.0"
-                                                          :exclusions  [org.clojure/tools.cli]}
-                 ;; temporary: latest master detects deps.edn
-                 com.github.clojure-emacs/refactor-nrepl {:mvn/version "master-SNAPSHOT"}}}
-
-  :cloverage
-  {:extra-deps {cloverage {:mvn/version "1.0.10"}}
-   :main-opts  ["-m" "cloverage.coverage" "--runner" "lambdaisland.kaocha" "--test-ns-path" "test" "--src-ns-path" "src" "--ns-exclude-regex" "if-not-set-it-does-not-work"]}}
-
- :mvn/repos
- {"central" {:url "https://repo1.maven.org/maven2/"}
-  "clojars" {:url "https://clojars.org/repo"}
-  "jitpack" {:url "https://jitpack.io"}}}
+  {}}}
