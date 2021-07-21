@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  kaocha: lambdaisland/kaocha@0.0.1
-  clojure: lambdaisland/clojure@0.0.2
+  kaocha: lambdaisland/kaocha@0.0.2
+  clojure: lambdaisland/clojure@0.0.6
 
 commands:
   checkout_and_run:
@@ -21,15 +21,15 @@ commands:
 jobs:
   java-15-clojure-1_10:
     executor: clojure/openjdk15
-    steps: [{checkout_and_run: {clojure_version: "1.10.2"}}]
+    steps: [{checkout_and_run: {clojure_version: "1.10.3"}}]
 
   java-11-clojure-1_10:
     executor: clojure/openjdk11
-    steps: [{checkout_and_run: {clojure_version: "1.10.2"}}]
+    steps: [{checkout_and_run: {clojure_version: "1.10.3"}}]
 
   java-9-clojure-1_10:
     executor: clojure/openjdk9
-    steps: [{checkout_and_run: {clojure_version: "1.10.2"}}]
+    steps: [{checkout_and_run: {clojure_version: "1.10.3"}}]
     
   java-9-clojure-1_9:
     executor: clojure/openjdk9
@@ -37,7 +37,7 @@ jobs:
 
   java-8-clojure-1_10:
     executor: clojure/openjdk8
-    steps: [{checkout_and_run: {clojure_version: "1.10.2"}}]
+    steps: [{checkout_and_run: {clojure_version: "1.10.3"}}]
     
   java-8-clojure-1_9:
     executor: clojure/openjdk8
