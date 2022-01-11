@@ -5,7 +5,7 @@
 
  :aliases
  {:test
-  {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-266"}}}
+  {:extra-deps {lambdaisland/kaocha {:mvn/version "1.60.977" }}}
 
   :test-cljs
   {:extra-deps  {org.clojure/clojurescript {:mvn/version "1.10.439"}
