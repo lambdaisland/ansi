@@ -1,0 +1,18 @@
+#!/usr/bin/env bb
+
+(ns proj (:require [lioss.main :as lioss]
+                   [lioss.subshell :as subshell]
+                   [clojure.java.io :as io]
+                   [clojure.string :as str]
+                   [lioss.version :as version]))
+
+(lioss/main
+ {:license                  :mpl
+  :inception-year           2018
+  :description              "Parse ANSI color escape sequences to Hiccup syntax"
+  :group-id                 "lambdaisland"
+  :aliases-as-optional-deps []})
+
+;; Local Variables:
+;; mode:clojure
+;; End:

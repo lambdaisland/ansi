@@ -7,11 +7,5 @@
  {:test
   {:extra-deps {lambdaisland/kaocha {:mvn/version "1.60.977" }}}
 
-  :test-cljs
-  {:extra-deps  {org.clojure/clojurescript {:mvn/version "1.11.4"}
-                 doo                       {:mvn/version "0.1.11"}}
-   :extra-paths ["test"]
-   :main-opts   ["-m" "lambdaisland.ansi.cljs-test-runner"]}
-
   :dev
   {}}}
