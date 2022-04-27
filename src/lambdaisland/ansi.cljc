@@ -128,7 +128,7 @@
       5 (let [[color bold?] (color-8-bit (first more))]
           [(merge {type color} (if bold? {:bold true}))
            (next more)])
-      2 [{:foreground (color-24-bit (take 3 more))}
+      2 [{type (color-24-bit (take 3 more))}
          (nthnext more 3)])))
 
 (defn str-split
