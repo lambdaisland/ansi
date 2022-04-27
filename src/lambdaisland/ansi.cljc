@@ -67,7 +67,7 @@
   of :vga :cmd :osx :putty :mirc :xterm :ubuntu. For finer control bind to
   *color-scheme* directly."
   [name & body]
-  `(binding [*color-scheme* (get color-schemes name)]
+  `(binding [*color-scheme* (get color-schemes ~name)]
      ~@body))
 
 (defn get-color [n]
