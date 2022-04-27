@@ -1,13 +1,13 @@
 ## Unreleased
 
-## Added
+### Added
 
-Add support for parsing a cursor location message (as sent from terminal to process), i.e. "\e[row;col;H"
+- Add support for parsing a cursor location message (as sent from terminal to process), i.e. "\e[row;col;H"
 
 ## Fixed
 
-## Changed
-
+- Fix the `with-color-scheme` macro
+- Make it impossible to use background CSI code 48
 
 ## v0.1.6 - 2018-08-14
 
