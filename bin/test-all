@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -e
-
-clj -A:test
-clj -A:test-cljs
